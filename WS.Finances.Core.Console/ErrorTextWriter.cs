@@ -32,7 +32,7 @@ namespace WS.Finances.Core.Console
         public override void WriteLine(string line)
         {
             outputWriter.WriteErrorLine(this.line + line);
-            line = "";
+            this.line = "";
         }
 
         public void WriteUsage(string commandName, OptionSet optionSet)
