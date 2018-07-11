@@ -1,0 +1,49 @@
+.nav {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+ul.nav li > a.active {
+    display: block;
+    width: 100%;
+    height:100%;
+    color: white;
+    background-color: #337ab7;
+}
+
+.currency-negative {
+    color: #a94442;
+}
+
+.currency-positive {
+    color: #3c763d;
+}
+
+td.currency, th.currency {
+    text-align: right;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.form-inline select, .form-inline button {
+    margin-left: 3px;
+}
