@@ -40,6 +40,20 @@ namespace WS.Finances.Core.Web.Controllers.Api
             throw new ArgumentException("Supplied paramater did not uniquely identify a transaction");
         }
 
+        [HttpGet("search")]
+        public IActionResult Search(int year, string descriptionPattern)
+        {
+            var transactions = _transactionService.Get(year, null, null, null, descriptionPattern)
+                .OrderBy(t => t.Timestamp)
+                .Take(100)
+                .ToList();
+            return Ok(new
+            {
+                Mapped = transactions.Where(t => !string.IsNullOrEmpty(t.Category)),
+                Unmapped = transactions.Where(t => string.IsNullOrEmpty(t.Category))
+            });
+        }
+
         [HttpPost("map/{year}/{month}/{accountName}")]
         public IActionResult MapTransaction(int year, int month, string accountName, MapTransactionRequest request)
         {

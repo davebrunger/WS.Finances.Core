@@ -9,6 +9,7 @@ import { CurrentMonthSummary } from './summary/currentMonthSummary';
 import { CurrentTransactions } from './transactions/currentTransactions';
 import { Transactions } from './transactions/transactions';
 import { MapTransaction } from './transactions/mapTransaction';
+import { Search } from './transactions/search';
 
 export const routes = (
     <Layout>
@@ -20,5 +21,6 @@ export const routes = (
         <Route exact path='/transactions' component={CurrentTransactions} />
         <Route exact path='/transactions/:year/:month/:accountName' component={Transactions} />
         <Route exact path='/transactions/:year/:month/:accountName/:transactionId' component={MapTransaction} />
+        <Route exact path='/search' component={Search} />
     </Layout>
 );

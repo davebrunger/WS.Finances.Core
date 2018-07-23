@@ -6,7 +6,8 @@ import { TransactionState } from "./transactionState";
 export interface ITransactionGridProps {
     unmapped?: ITransaction[];
     mapped?: ITransaction[];
-    selectedChanged: (index: number, selected: boolean) => void;  
+    selectedChanged?: (index: number, selected: boolean) => void;
+    noTransactionMessageSuffixOverride?: string;
 }
 
 export class TransactionGrid extends React.Component<ITransactionGridProps, {}> {
@@ -17,15 +18,19 @@ export class TransactionGrid extends React.Component<ITransactionGridProps, {}> 
     }
 
     private handlSelectedChange(index: number, selected: boolean) {
-        this.props.selectedChanged(index, selected);
+        if (this.props.selectedChanged) {
+            this.props.selectedChanged(index, selected);
+        }
     }
 
     private pushTransactionRows(source: ITransaction[], transactionState: string, target: JSX.Element[]) {
         target.push(<tr key={transactionState}><th colSpan={6}>{transactionState} Transactions</th></tr>);
         if ((!source) || (source.length === 0)) {
+            var suffix = this.props.noTransactionMessageSuffixOverride || "for this month";
+            var message = `There are no ${transactionState.toLowerCase()} transactions ${suffix}`;
             target.push(
                 <tr key={`${transactionState} none`}>
-                    <td colSpan={6}>There are no {transactionState.toLowerCase()} transactions for this month</td>
+                    <td colSpan={6}>{message}</td>
                 </tr>
             );
         } else {

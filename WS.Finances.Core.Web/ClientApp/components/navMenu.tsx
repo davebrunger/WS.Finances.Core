@@ -20,6 +20,9 @@ export class NavMenu extends React.Component<{}, {}> {
                 <li>
                     <NavLink to={'/accounts'} activeClassName='active'>Accounts</NavLink>
                 </li>
+                <li>
+                    <NavLink to={'/search'} activeClassName='active'>Search</NavLink>
+                </li>
             </ul>
         );
     }
