@@ -1,7 +1,6 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import { HttpService } from "../../services/httpService";
-import { ITransactionsState } from "./transactions";
 import { ITransaction } from "./ITransaction";
 import { TransactionGrid } from "./transactionGrid";
 
@@ -10,6 +9,7 @@ export interface ISearchState {
     description?: string;
     mapped?: ITransaction[];
     unmapped?: ITransaction[];
+    transactionCount?: number;
 }
 
 export class Search extends React.Component<RouteComponentProps<{}>, ISearchState> {
@@ -25,13 +25,14 @@ export class Search extends React.Component<RouteComponentProps<{}>, ISearchStat
         var year = this.state.year || "";
         var description = encodeURIComponent(this.state.description || "");
         const transactionsUrl = `/api/transactions/search?year=${year}&descriptionPattern=${description}`;
-        HttpService.get<ITransactionsState>(transactionsUrl,
+        HttpService.get<ISearchState>(transactionsUrl,
             data => {
                 const mapped = this.sortByDate(data.mapped || []);
                 const unmmapped = this.sortByDate(data.unmapped || []);
                 this.setState({
                     mapped: mapped,
                     unmapped: unmmapped,
+                    transactionCount: data.transactionCount
                 });
             });
     }
@@ -40,10 +41,10 @@ export class Search extends React.Component<RouteComponentProps<{}>, ISearchStat
         return transactions.sort((a, b) => a.timestamp.valueOf() - b.timestamp.valueOf());
     }
 
-    private isValidRegexPattern(regexPattern : string) {
+    private isValidRegexPattern(regexPattern: string) {
         try {
             new RegExp(regexPattern);
-        } catch(e) {
+        } catch (e) {
             return false;
         }
         return true;
@@ -80,6 +81,17 @@ export class Search extends React.Component<RouteComponentProps<{}>, ISearchStat
             years.push(<option key={i} value={i}>{i}</option>);
         }
 
+        var message = "The search form will display the first 100 matching transactions";
+        if ((this.state.transactionCount || 0) > 100) {
+            message = `Displaying the first 100 of ${this.state.transactionCount} matching transactions`;
+        }
+        else if ((this.state.transactionCount || 0) > 1) {
+            message = `Displaying all ${this.state.transactionCount} matching transactions`;
+        }
+        else if (this.state.transactionCount === 1) {
+            message = "Displaying 1 matching transaction";
+        }
+
         return (
             <div>
                 <h2>Search Transactions</h2>
@@ -103,9 +115,9 @@ export class Search extends React.Component<RouteComponentProps<{}>, ISearchStat
                     </div>
                 </form>
                 <p>
-                    The search form will display the first 100 matching transactions
+                    {message}
                 </p>
-                <TransactionGrid mapped={this.state.mapped} unmapped={this.state.unmapped} noTransactionMessageSuffixOverride={"that match the search criteria"}/>
+                <TransactionGrid mapped={this.state.mapped} unmapped={this.state.unmapped} noTransactionMessageSuffixOverride={"that match the search criteria"} />
             </div>
         );
     }

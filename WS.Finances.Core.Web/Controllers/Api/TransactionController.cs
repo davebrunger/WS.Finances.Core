@@ -43,14 +43,17 @@ namespace WS.Finances.Core.Web.Controllers.Api
         [HttpGet("search")]
         public IActionResult Search(int year, string descriptionPattern)
         {
-            var transactions = _transactionService.Get(year, null, null, null, descriptionPattern)
+            var transactions = _transactionService.Get(year, null, null, null, descriptionPattern).ToList();
+            var transactionCount = transactions.Count;
+            var top100Transactions = transactions
                 .OrderBy(t => t.Timestamp)
                 .Take(100)
                 .ToList();
             return Ok(new
             {
-                Mapped = transactions.Where(t => !string.IsNullOrEmpty(t.Category)),
-                Unmapped = transactions.Where(t => string.IsNullOrEmpty(t.Category))
+                Mapped = top100Transactions.Where(t => !string.IsNullOrEmpty(t.Category)),
+                Unmapped = top100Transactions.Where(t => string.IsNullOrEmpty(t.Category)),
+                TransactionCount = transactionCount
             });
         }
 
