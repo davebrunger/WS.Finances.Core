@@ -334,3 +334,10 @@ ASALocalRun/
 
 # WebPack Builf=d Files
 **/wwwroot/dist/
+
+# Local Data Folders
+Data/
+Import/
+
+# Mac files
+*.DS_Store
