@@ -18,6 +18,14 @@ namespace WS.Finances.Core.Console
     {
         static void Main(string[] args)
         {
+            WriteLine("---------");
+            WriteLine($"Number of arguments: {args.Length}");
+            WriteLine();
+            foreach(var arg in args)
+            {
+                WriteLine(arg);
+            }
+            WriteLine("---------");
             try
             {
                 var appsettings = LoadConfiguration();

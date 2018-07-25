@@ -5,6 +5,7 @@ using NDesk.Options;
 using WS.Finances.Core.Lib.Services;
 using WS.Utilities.Console;
 using WS.Utilities.Console.Tabulation;
+using WS.Finances.Core.Lib.ExtensionMethods;
 
 namespace WS.Finances.Core.Console.Commands
 {
@@ -30,9 +31,9 @@ namespace WS.Finances.Core.Console.Commands
             string categoryName = null;
 
             var optionSet = new OptionSet {
-                {"y|year=", y => year = int.Parse(y)},
-                {"m|month=", m => month = int.Parse(m)},
-                {"c|category=", c => categoryName = c},
+                {"y|year=", "The year to show transactions for (REQUIRED)", y => year = y.ToInteger()},
+                {"m|month=", "The the month to show transactions for (REQUIRED)", m => month = m.ToMonthNumber()},
+                {"c|category=", "The name of the catergory to show transactions for (REQUIRED)", c => categoryName = c},
             };
             var extraParameters = optionSet.Parse(options);
 

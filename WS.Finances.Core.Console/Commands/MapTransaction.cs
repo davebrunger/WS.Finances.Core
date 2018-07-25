@@ -6,6 +6,7 @@ using NDesk.Options;
 using WS.Finances.Core.Lib.Services;
 using WS.Utilities.Console;
 using WS.Utilities.Console.Tabulation;
+using WS.Finances.Core.Lib.ExtensionMethods;
 
 namespace WS.Finances.Core.Console.Commands
 {
@@ -35,11 +36,11 @@ namespace WS.Finances.Core.Console.Commands
             string categoryName = null;
 
             var optionSet = new OptionSet {
-                {"y|year=", y => year = int.Parse(y)},
-                {"m|month=", m => month = int.Parse(m)},
-                {"a|account=", a => accountName = a},
-                {"d|descriptionPattern=", d => descriptionPattern = d},
-                {"c|category=", c => categoryName = c}
+                {"y|year=", "The year to map transactions in (REQUIRED)", y => year = y.ToInteger()},
+                {"m|month=", "The month to map transactions in (REQUIRED)", m => month = m.ToMonthNumber()},
+                {"a|account=", "The name of the account to map transactions for (REQUIRED)", a => accountName = a},
+                {"p|descriptionPattern=", "A regular expression pattern to identify the transactions to map (REQUIRED)", d => descriptionPattern = d},
+                {"c|category=", "The name of the category to map transactions to (REQUIRED)", c => categoryName = c}
             };
             var extraParameters = optionSet.Parse(options);
 

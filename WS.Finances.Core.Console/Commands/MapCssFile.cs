@@ -5,6 +5,7 @@ using NDesk.Options;
 using WS.Finances.Core.Lib.Services;
 using WS.Utilities.Console;
 using WS.Utilities.Console.Tabulation;
+using WS.Finances.Core.Lib.ExtensionMethods;
 
 namespace WS.Finances.Core.Console.Commands
 {
@@ -33,10 +34,10 @@ namespace WS.Finances.Core.Console.Commands
             string filePath = null;
 
             var optionSet = new OptionSet {
-                {"y|year=", y => year = int.Parse(y)},
-                {"m|month=", m => month = int.Parse(m)},
-                {"a|account=", a => accountName = a},
-                {"f|filePath=", f => filePath = f}
+                {"y|year=", "The year that the CSS file is for (REQUIRED)", y => year = y.ToInteger()},
+                {"m|month=", "The the month that the CSS file is for (REQUIRED)", m => month = m.ToMonthNumber()},
+                {"a|account=", "The name of the account that the CSS file is for (REQUIRED)", a => accountName = a},
+                {"f|filePath=", "The path of the CSS file to import (REQUIRED)", f => filePath = f}
             };
             var extraParameters = optionSet.Parse(options);
 

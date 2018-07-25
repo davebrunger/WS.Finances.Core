@@ -6,6 +6,7 @@ using WS.Finances.Core.Lib.Models;
 using WS.Finances.Core.Lib.Services;
 using WS.Utilities.Console;
 using WS.Utilities.Console.Tabulation;
+using WS.Finances.Core.Lib.ExtensionMethods;
 
 namespace WS.Finances.Core.Console.Commands
 {
@@ -30,9 +31,9 @@ namespace WS.Finances.Core.Console.Commands
             string accountName = null;
 
             var optionSet = new OptionSet {
-                {"y|year=", y => year = int.Parse(y)},
-                {"m|month=", m => month = int.Parse(m)},
-                {"a|account=", a => accountName = a}
+                {"y|year=", "The year to show the unmapped transactions for (REQUIRED)", y => year = y.ToInteger()},
+                {"m|month=", "The month to show the unmapped transactions for (REQUIRED)", m => month = m.ToMonthNumber()},
+                {"a|account=", "The name of the account to show the unmapped transactions for (REQUIRED)", a => accountName = a}
             };
             var extraParameters = optionSet.Parse(options);
 
