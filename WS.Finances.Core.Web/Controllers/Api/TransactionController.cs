@@ -43,7 +43,7 @@ namespace WS.Finances.Core.Web.Controllers.Api
         [HttpGet("search")]
         public IActionResult Search(int year, string descriptionPattern)
         {
-            var transactions = _transactionService.Get(year, null, null, null, descriptionPattern).ToList();
+            var transactions = _transactionService.Get(year, descriptionPattern: descriptionPattern, descriptionPatternIgnoreCase: true).ToList();
             var transactionCount = transactions.Count;
             var top100Transactions = transactions
                 .OrderBy(t => t.Timestamp)

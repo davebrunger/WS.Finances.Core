@@ -28,6 +28,15 @@ namespace WS.Finances.Core.Lib.ExtensionMethods
                 return result;
             }
             return null;
+        }        
+        
+        public static bool? ToBoolean(this string boolean)
+        {
+            if (bool.TryParse(boolean, out var result))
+            {
+                return result;
+            }
+            return null;
         }
     }
 }

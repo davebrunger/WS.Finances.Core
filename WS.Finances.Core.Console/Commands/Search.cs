@@ -32,6 +32,7 @@ namespace WS.Finances.Core.Console.Commands
             string descriptionPattern = null;
             var unMappedOnly = false;
             int? transactionId = null;
+            bool ignoreCase = false;
 
             var optionSet = new OptionSet {
                 {"y|year=", "The year in which to search for transactions (OPTIONAL)", y => year = y.ToInteger()},
@@ -41,6 +42,7 @@ namespace WS.Finances.Core.Console.Commands
                 {"d|descriptionPattern=", "A regular expression pattern used to match transaction descriptions (OPTIONAL)", d => descriptionPattern = d},
                 {"u|unmappedOnly", "Only search for unmapped subscriptions (OPTIONAL)", u => unMappedOnly = u != null},
                 {"t|transactionId=", "A transaction ID to search for (OPTIONAL)", t => transactionId = t.ToInteger()},
+                {"i|ignoreCase=", "Set to true to ignore the case of the description pattern (OPTIONAL)", i => ignoreCase = i.ToBoolean() ?? false},
             };
             var extraParameters = optionSet.Parse(options);
 

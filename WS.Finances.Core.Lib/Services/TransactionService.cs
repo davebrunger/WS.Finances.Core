@@ -20,8 +20,8 @@ namespace WS.Finances.Core.Lib.Services
             _repositoryFactory = repositoryFactory;
         }
 
-        public IEnumerable<Transaction> Get(int? year = null, int? month = null, string accountName = null, string category = null, 
-            string descriptionPattern = null, bool unMappedOnly = false, int? transactionId = null)
+        public IEnumerable<Transaction> Get(int? year = null, int? month = null, string accountName = null, string category = null,
+            string descriptionPattern = null, bool unMappedOnly = false, int? transactionId = null, bool descriptionPatternIgnoreCase = false)
         {
             var repository = _repositoryFactory.GetRepository<Transaction>();
             var filterableRepository = repository as IFilterableTransactionRepository;
@@ -52,7 +52,8 @@ namespace WS.Finances.Core.Lib.Services
             }
             if (!string.IsNullOrEmpty(descriptionPattern))
             {
-                var descriptionRegex = new Regex(descriptionPattern);
+                var descriptionRegex = new Regex(descriptionPattern,
+                    descriptionPatternIgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
                 transactions = transactions.Where(t => descriptionRegex.IsMatch(t.Description));
             }
             if (unMappedOnly)
