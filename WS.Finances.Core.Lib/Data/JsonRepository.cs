@@ -75,6 +75,11 @@ namespace WS.Finances.Core.Lib.Data
             if (_data != null)
             {
                 var data = JsonConvert.SerializeObject(_data, Formatting.Indented);
+                var path = Path.GetDirectoryName(FileName);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
                 File.WriteAllText(FileName, data);
             }
         }
