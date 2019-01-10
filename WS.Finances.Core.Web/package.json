@@ -1,5 +1,5 @@
 {
-  "name": "WS.Finances.Core.Web",
+  "name": "ws-finances-core-web",
   "private": true,
   "version": "0.0.0",
   "devDependencies": {

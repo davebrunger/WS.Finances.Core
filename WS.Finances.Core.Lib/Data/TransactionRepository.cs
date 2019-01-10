@@ -49,14 +49,16 @@ namespace WS.Finances.Core.Lib.Data
 
         private JsonRepository<Transaction> GetJsonRepository(Transaction key)
         {
-            return new JsonRepository<Transaction>(Path.Combine(BaseDirectory, $@"{key.Year}-{key.Month}-{key.AccountName}.json"));
+            return new JsonRepository<Transaction>(Path.Combine(BaseDirectory, $"{key.Year:0000}", $"{key.Month:0000}", $"{key.AccountName}.json"));
         }
 
         private IEnumerable<JsonRepository<Transaction>> GetAllJsonRepositories(int? year, int? month, string accountName)
         {
             var accountNamePattern = string.IsNullOrEmpty(accountName) ? "*" : accountName;
-            var filePattern = $"{year?.ToString() ?? "*"}-{month?.ToString() ?? "*"}-{accountNamePattern}.json";
-            return Directory.EnumerateFiles(BaseDirectory, filePattern).Select(f => new JsonRepository<Transaction>(f));
+            return Directory.EnumerateDirectories(BaseDirectory, year?.ToString("0000") ?? "*")
+                .SelectMany(d => Directory.EnumerateDirectories(d, month?.ToString("00") ?? "*"))
+                .SelectMany(d => Directory.EnumerateFiles(d, $"{accountNamePattern}.json"))
+                .Select(f => new JsonRepository<Transaction>(f));
         }
     }
 }
