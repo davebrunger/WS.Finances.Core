@@ -49,7 +49,7 @@ namespace WS.Finances.Core.Lib.Data
 
         private JsonRepository<Transaction> GetJsonRepository(Transaction key)
         {
-            return new JsonRepository<Transaction>(Path.Combine(BaseDirectory, $"{key.Year:0000}", $"{key.Month:0000}", $"{key.AccountName}.json"));
+            return new JsonRepository<Transaction>(Path.Combine(BaseDirectory, $"{key.Year:0000}", $"{key.Month:00}", $"{key.AccountName}.json"));
         }
 
         private IEnumerable<JsonRepository<Transaction>> GetAllJsonRepositories(int? year, int? month, string accountName)
