@@ -6,7 +6,7 @@ export interface ITransaction {
     sourceFileName: string;
     category: string;
     description: string;
-    timestamp: Date;
+    timestamp: string;
     moneyIn?: number;
     moneyOut?: number;
     balance?: number;

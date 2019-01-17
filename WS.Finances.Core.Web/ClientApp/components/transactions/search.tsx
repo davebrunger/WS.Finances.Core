@@ -3,6 +3,7 @@ import { RouteComponentProps } from "react-router";
 import { HttpService } from "../../services/httpService";
 import { ITransaction } from "./ITransaction";
 import { TransactionGrid } from "./transactionGrid";
+import * as moment from "moment";
 
 export interface ISearchState {
     year?: number;
@@ -38,7 +39,7 @@ export class Search extends React.Component<RouteComponentProps<{}>, ISearchStat
     }
 
     private sortByDate(transactions: ITransaction[]) {
-        return transactions.sort((a, b) => a.timestamp.valueOf() - b.timestamp.valueOf());
+        return transactions.sort((a, b) => moment(a.timestamp).toDate().valueOf() - moment(b.timestamp).toDate().valueOf());
     }
 
     private isValidRegexPattern(regexPattern: string) {

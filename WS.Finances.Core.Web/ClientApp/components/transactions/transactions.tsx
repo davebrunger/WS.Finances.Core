@@ -1,6 +1,5 @@
 import * as React from "react";
 import { ITransaction } from "./ITransaction";
-import { RegexBuilder } from "./regexBuilder";
 import { TransactionGrid } from "./transactionGrid";
 import { HttpService } from "../../services/httpService";
 import { IAccount } from "../accounts/IAccount";
@@ -8,6 +7,7 @@ import { Month } from "../utilities/month";
 import { DateService } from "../../services/dateService";
 import { IMap } from "../map/IMap";
 import { RouteComponentProps, Redirect } from "react-router-dom";
+import * as moment from "moment";
 
 export interface ITransactionsProps {
     year: string;
@@ -45,7 +45,7 @@ export class Transactions extends React.Component<RouteComponentProps<ITransacti
         HttpService.get<ITransactionsState>(transactionsUrl,
             data => {
                 const mapped = this.sortByDate(data.mapped || []);
-                const unmmapped = this.sortByDate(data.unmapped || []);
+                const unmmapped = this.sortByDescription(data.unmapped || []);
                 this.setState({
                     mapped: mapped,
                     unmapped: unmmapped,
@@ -55,7 +55,11 @@ export class Transactions extends React.Component<RouteComponentProps<ITransacti
     }
 
     private sortByDate(transactions: ITransaction[]) {
-        return transactions.sort((a, b) => a.timestamp.valueOf() - b.timestamp.valueOf());
+        return transactions.sort((a, b) => moment(a.timestamp).toDate().valueOf() - moment(b.timestamp).toDate().valueOf());
+    }
+
+    private sortByDescription(transactions: ITransaction[]) {
+        return transactions.sort((a, b) => a.description < b.description ? -1 : (a.description > b.description ? 1 : 0));
     }
 
     private handleYearChange(event: React.FormEvent<HTMLSelectElement>) {
@@ -90,12 +94,12 @@ export class Transactions extends React.Component<RouteComponentProps<ITransacti
     private handleMapClick() {
         const selectedTransactions = (this.state.unmapped || [])
             .filter((_, i) => (this.state.selected || [])[i])
-            .map(t => t.description);
+            .map(t => t.transactionID);
         const params = this.props.match.params;
         const mapUrl = `/api/transactions/map/${params.year}/${params.month}/${params.accountName}`;
         HttpService.post(mapUrl,
             {
-                pattern: RegexBuilder.toPattern(selectedTransactions),
+                transactionIds: selectedTransactions,
                 category: this.state.category
             },
             undefined,
@@ -210,7 +214,7 @@ export class Transactions extends React.Component<RouteComponentProps<ITransacti
                     </div>
                     {mapAllSection}
                 </form>
-                <TransactionGrid mapped={this.state.mapped} unmapped={this.state.unmapped} selectedChanged={this.handlSelectedChange} />
+                <TransactionGrid mapped={this.state.mapped} unmapped={this.state.unmapped} selected={this.state.selected} selectedChanged={this.handlSelectedChange} />
             </div>
         );
     }

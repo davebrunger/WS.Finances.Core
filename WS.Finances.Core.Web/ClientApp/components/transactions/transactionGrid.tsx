@@ -6,6 +6,7 @@ import { TransactionState } from "./transactionState";
 export interface ITransactionGridProps {
     unmapped?: ITransaction[];
     mapped?: ITransaction[];
+    selected?: boolean[];
     selectedChanged?: (index: number, selected: boolean) => void;
     noTransactionMessageSuffixOverride?: string;
 }
@@ -23,7 +24,7 @@ export class TransactionGrid extends React.Component<ITransactionGridProps, {}> 
         }
     }
 
-    private pushTransactionRows(source: ITransaction[], transactionState: string, target: JSX.Element[]) {
+    private pushTransactionRows(source: ITransaction[], transactionState: string, target: JSX.Element[], selected: boolean[]) {
         target.push(<tr key={transactionState}><th colSpan={6}>{transactionState} Transactions</th></tr>);
         if ((!source) || (source.length === 0)) {
             var suffix = this.props.noTransactionMessageSuffixOverride || "for this month";
@@ -35,7 +36,7 @@ export class TransactionGrid extends React.Component<ITransactionGridProps, {}> 
             );
         } else {
             source.forEach((transaction, index) => target.push(
-                <TransactionGridRow key={`${transactionState} ${index}`} transactionState={transactionState} index={index} transaction={transaction} selectedChanged={this.handlSelectedChange} />
+                <TransactionGridRow key={`${transactionState} ${index}`} transactionState={transactionState} index={index} transaction={transaction} selected={selected[index]} selectedChanged={this.handlSelectedChange} />
             ));
         }
     }
@@ -52,8 +53,8 @@ export class TransactionGrid extends React.Component<ITransactionGridProps, {}> 
         if (!(this.props.unmapped || this.props.mapped)) {
             rows.push(<tr key={1}><td colSpan={5}>Please Wait...</td></tr>);
         } else {
-            this.pushTransactionRows(this.props.unmapped || [], TransactionState.unmapped, rows);
-            this.pushTransactionRows(this.props.mapped || [], TransactionState.mapped, rows);
+            this.pushTransactionRows(this.props.unmapped || [], TransactionState.unmapped, rows, this.props.selected || []);
+            this.pushTransactionRows(this.props.mapped || [], TransactionState.mapped, rows, []);
         }
 
 

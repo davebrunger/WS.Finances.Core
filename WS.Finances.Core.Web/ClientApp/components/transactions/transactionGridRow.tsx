@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import { ITransaction } from "./ITransaction";
 import { TransactionState } from "./transactionState";
 import { Currency } from "../utilities/currency";
-import { DateAndTime } from "../utilities/dateAndTime";
+import { DateAndTime, DateAndTimeFormat } from "../utilities/dateAndTime";
+import * as moment from "moment";
 
 export interface ITransactionGridRowProps {
     transactionState: string;
     index: number;
     transaction: ITransaction;
-    selectedChanged : (index : number, selected : boolean) => void;  
+    selected: boolean;
+    selectedChanged: (index: number, selected: boolean) => void;
 }
 
 export interface ITransactionGridRowState {
@@ -20,7 +22,7 @@ export class TransactionGridRow extends React.Component<ITransactionGridRowProps
 
     constructor(props: ITransactionGridRowProps) {
         super(props);
-        this.state = {selected:false};
+        this.state = { selected: props.selected };
         this.handlSelectedChange = this.handlSelectedChange.bind(this);
     }
 
@@ -34,7 +36,7 @@ export class TransactionGridRow extends React.Component<ITransactionGridRowProps
 
     public componentWillReceiveProps(nextProps: ITransactionGridRowProps) {
         if (nextProps.transaction.description !== this.props.transaction.description) {
-            this.setState({ selected: false });
+            this.setState({ selected: nextProps.selected });
         }
     }
 
@@ -48,11 +50,11 @@ export class TransactionGridRow extends React.Component<ITransactionGridRowProps
 
         const checkbox = this.props.transactionState === TransactionState.mapped
             ? <span>&nbsp;</span>
-            : <input type="checkbox" checked={this.state.selected} onChange={this.handlSelectedChange}/>
+            : <input type="checkbox" checked={this.state.selected} onChange={this.handlSelectedChange} />
 
         return (
             <tr>
-                <td><DateAndTime date={this.props.transaction.timestamp} /></td>
+                <td><DateAndTime date={moment(this.props.transaction.timestamp).toDate()} format={DateAndTimeFormat.DateOnly}/></td>
                 <td>{checkbox}</td>
                 <td>{category}</td>
                 <td>{this.props.transaction.description}</td>

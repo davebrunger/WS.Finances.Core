@@ -14,7 +14,16 @@ export class HttpService {
             for (let key in data) {
                 if (data.hasOwnProperty(key)) {
                     if (formData) {
-                        formData.append(key, data[key]);
+                        var value = data[key];
+                        if (Array.isArray(value))
+                        {
+                            var values = value as any[];
+                            values.forEach(v => formData.append(key, v));
+                        }
+                        else
+                        {
+                            formData.append(key, value);
+                        }
                     }
                 }
             }

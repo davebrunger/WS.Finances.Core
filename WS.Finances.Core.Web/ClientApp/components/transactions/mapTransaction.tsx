@@ -2,11 +2,11 @@ import * as React from "react";
 import { HttpService } from "../../services/httpService";
 import { IMap } from "../map/IMap";
 import { ITransaction } from "./ITransaction";
-import { RegexBuilder } from "./regexBuilder";
 import { Currency } from "../utilities/currency";
 import { Month } from "../utilities/month";
-import { DateAndTime } from "../utilities/dateAndTime";
+import { DateAndTime, DateAndTimeFormat } from "../utilities/dateAndTime";
 import { RouteComponentProps } from "react-router-dom";
+import * as moment from "moment";
 
 export interface IMapTransactionsProps {
     year: string;
@@ -35,7 +35,7 @@ export class MapTransaction extends React.Component<RouteComponentProps<IMapTran
         this.setState({ category: event.currentTarget.value });
     }
 
-    private handleMapClick(event: React.MouseEvent<HTMLButtonElement>) {
+    private handleMapClick() {
         if (!this.state.transaction) {
             alert("Please wait for transaction details to load");
             return;
@@ -48,7 +48,7 @@ export class MapTransaction extends React.Component<RouteComponentProps<IMapTran
         const mapUrl = `/api/transactions/map/${params.year}/${params.month}/${params.accountName}`;
         HttpService.post(mapUrl,
             {
-                pattern: RegexBuilder.toPattern([this.state.transaction.description]),
+                transactionIds: [this.state.transaction.transactionID],
                 category: this.state.category
             },
             undefined,
@@ -88,7 +88,7 @@ export class MapTransaction extends React.Component<RouteComponentProps<IMapTran
         let moneyIn = <span>Please wait...</span>;
         let moneyOut = <span>Please wait...</span>;
         if (this.state.transaction) {
-            dateAndTime = <DateAndTime date={this.state.transaction.timestamp} />;
+            dateAndTime = <DateAndTime date={moment(this.state.transaction.timestamp).toDate()} format={DateAndTimeFormat.DateOnly}/>;
             description = this.state.transaction.description;
             moneyIn = <Currency value={this.state.transaction.moneyIn} />;
             moneyOut = <Currency value={this.state.transaction.moneyOut} invertColours={true} />;
