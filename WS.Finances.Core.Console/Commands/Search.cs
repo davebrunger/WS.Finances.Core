@@ -31,7 +31,7 @@ namespace WS.Finances.Core.Console.Commands
             string categoryName = null;
             string descriptionPattern = null;
             var unMappedOnly = false;
-            int? transactionId = null;
+            long? transactionId = null;
             bool ignoreCase = false;
 
             var optionSet = new OptionSet {
@@ -41,7 +41,7 @@ namespace WS.Finances.Core.Console.Commands
                 {"c|category=", "The category in which to search for transactions (OPTIONAL)", c => categoryName = c},
                 {"d|descriptionPattern=", "A regular expression pattern used to match transaction descriptions (OPTIONAL)", d => descriptionPattern = d},
                 {"u|unmappedOnly", "Only search for unmapped subscriptions (OPTIONAL)", u => unMappedOnly = u != null},
-                {"t|transactionId=", "A transaction ID to search for (OPTIONAL)", t => transactionId = t.ToInteger()},
+                {"t|transactionId=", "A transaction ID to search for (OPTIONAL)", t => transactionId = t.ToLong()},
                 {"i|ignoreCase=", "Set to true to ignore the case of the description pattern (OPTIONAL)", i => ignoreCase = i.ToBoolean() ?? false},
             };
             var extraParameters = optionSet.Parse(options);
@@ -56,9 +56,12 @@ namespace WS.Finances.Core.Console.Commands
         }
 
         private void Execute(int? year, int? month, string accountName, string categoryName, string descriptionPattern, 
-            bool unMappedOnly, int? transactionId)
+            bool unMappedOnly, long? transactionId)
         {
-            transactionService.Get(year, month, accountName, categoryName, descriptionPattern, unMappedOnly, transactionId)
+            var transactionIds = transactionId.HasValue
+                ? new long[] {transactionId.Value}
+                : null;
+            transactionService.Get(year, month, accountName, categoryName, descriptionPattern, unMappedOnly, transactionIds)
                 .OrderByDescending(t => t.Timestamp)
                 .Tabulate(outputWriter, true, 5);
         }

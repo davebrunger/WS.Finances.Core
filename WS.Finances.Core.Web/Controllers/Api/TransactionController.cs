@@ -30,9 +30,9 @@ namespace WS.Finances.Core.Web.Controllers.Api
         }
 
         [HttpGet("{year}/{month}/{accountName}/{transactionId}")]
-        public IActionResult GetTransactions(int year, int month, string accountName, int transactionId)
+        public IActionResult GetTransactions(int year, int month, string accountName, long transactionId)
         {
-            var transactions = _transactionService.Get(year, month, accountName, transactionId: transactionId).ToList();
+            var transactions = _transactionService.Get(year, month, accountName, transactionIds: new long[] { transactionId }).ToList();
             if (transactions.Count == 1)
             {
                 return Ok(transactions[0]);
@@ -64,7 +64,7 @@ namespace WS.Finances.Core.Web.Controllers.Api
             {
                 throw new ArgumentException($"Unknown category: {request.Category}", nameof(request));
             }
-            var transactionsToMap = _transactionService.Get(year, month, accountName, descriptionPattern: request.Pattern);
+            var transactionsToMap = _transactionService.Get(year, month, accountName, descriptionPattern: request.Pattern, transactionIds: request.TransactionIds?.ToList());
             foreach (var transaction in transactionsToMap)
             {
                 transaction.Category = request.Category;

@@ -30,6 +30,15 @@ namespace WS.Finances.Core.Lib.ExtensionMethods
             return null;
         }        
         
+        public static long? ToLong(this string integer)
+        {
+            if (long.TryParse(integer, out var result))
+            {
+                return result;
+            }
+            return null;
+        }        
+        
         public static bool? ToBoolean(this string boolean)
         {
             if (bool.TryParse(boolean, out var result))

@@ -21,7 +21,7 @@ namespace WS.Finances.Core.Lib.Services
         }
 
         public IEnumerable<Transaction> Get(int? year = null, int? month = null, string accountName = null, string category = null,
-            string descriptionPattern = null, bool unMappedOnly = false, int? transactionId = null, bool descriptionPatternIgnoreCase = false)
+            string descriptionPattern = null, bool unMappedOnly = false, IReadOnlyCollection<long> transactionIds = null, bool descriptionPatternIgnoreCase = false)
         {
             var repository = _repositoryFactory.GetRepository<Transaction>();
             var filterableRepository = repository as IFilterableTransactionRepository;
@@ -60,9 +60,9 @@ namespace WS.Finances.Core.Lib.Services
             {
                 transactions = transactions.Where(t => string.IsNullOrEmpty(t.Category));
             }
-            if (transactionId.HasValue)
+            if (transactionIds?.Count > 0)
             {
-                transactions = transactions.Where(t => t.TransactionID == transactionId.Value);
+                transactions = transactions.Where(t => transactionIds.Contains(t.TransactionID));
             }
             return transactions;
         }

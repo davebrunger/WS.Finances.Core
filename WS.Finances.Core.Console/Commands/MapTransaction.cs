@@ -34,26 +34,28 @@ namespace WS.Finances.Core.Console.Commands
             string accountName = null;
             string descriptionPattern = null;
             string categoryName = null;
+            long? transactionId = null;
 
             var optionSet = new OptionSet {
                 {"y|year=", "The year to map transactions in (REQUIRED)", y => year = y.ToInteger()},
                 {"m|month=", "The month to map transactions in (REQUIRED)", m => month = m.ToMonthNumber()},
                 {"a|account=", "The name of the account to map transactions for (REQUIRED)", a => accountName = a},
-                {"p|descriptionPattern=", "A regular expression pattern to identify the transactions to map (REQUIRED)", d => descriptionPattern = d},
+                {"p|descriptionPattern=", "A regular expression pattern to identify the transactions to map (Either p|descriptionPattern or t|transactionId is REQUIRED)", d => descriptionPattern = d},
+                {"t|transactionId=", "The ID of the transaction to map (Either p|descriptionPattern or t|transactionId is REQUIRED)", t => transactionId = t.ToLong()},
                 {"c|category=", "The name of the category to map transactions to (REQUIRED)", c => categoryName = c}
             };
             var extraParameters = optionSet.Parse(options);
 
-            if (year == null || month == null || string.IsNullOrEmpty(accountName) || string.IsNullOrEmpty(descriptionPattern) || string.IsNullOrEmpty(categoryName) || extraParameters.Count > 0)
+            if (year == null || month == null || string.IsNullOrEmpty(accountName) || (string.IsNullOrEmpty(descriptionPattern) && !transactionId.HasValue) || string.IsNullOrEmpty(categoryName) || extraParameters.Count > 0)
             {
                 new ErrorTextWriter(_outputWriter).WriteUsage(Name, optionSet);
                 return null;
             }
 
-            return () => Execute(year.Value, month.Value, accountName, descriptionPattern, categoryName);
+            return () => Execute(year.Value, month.Value, accountName, descriptionPattern, transactionId, categoryName);
         }
 
-        private void Execute(int year, int month, string accountName, string descriptionPattern, string categoryName)
+        private void Execute(int year, int month, string accountName, string descriptionPattern, long? transactionId, string categoryName)
         {
             var account = _accountService.Get(accountName);
             if (account == null)
@@ -72,8 +74,11 @@ namespace WS.Finances.Core.Console.Commands
             {
                 _outputWriter.WriteErrorLine($"Cannot find data file: {fileName}");
             }
+            var transactionIds = transactionId.HasValue
+                ? new long[] {transactionId.Value}
+                : null;
 
-            var transactionsToMap = _transactionService.Get(year, month, account.Name, descriptionPattern: descriptionPattern).ToList();
+            var transactionsToMap = _transactionService.Get(year, month, account.Name, descriptionPattern: descriptionPattern, transactionIds: transactionIds).ToList();
             foreach (var transaction in transactionsToMap)
             {
                 transaction.Category = category.Category;
