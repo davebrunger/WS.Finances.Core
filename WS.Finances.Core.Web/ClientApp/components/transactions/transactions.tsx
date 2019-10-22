@@ -45,7 +45,7 @@ export class Transactions extends React.Component<RouteComponentProps<ITransacti
         HttpService.get<ITransactionsState>(transactionsUrl,
             data => {
                 const mapped = this.sortByDate(data.mapped || []);
-                const unmmapped = this.sortByDescription(data.unmapped || []);
+                const unmmapped = this.sortByDate(data.unmapped || []);
                 this.setState({
                     mapped: mapped,
                     unmapped: unmmapped,
@@ -168,7 +168,17 @@ export class Transactions extends React.Component<RouteComponentProps<ITransacti
             : [];
 
         const categories = this.state.map
-            ? this.state.map.map(m => <option key={m.category} value={m.category}>{m.category}</option>)
+            ? this.state.map.map(m => m.section).filter((section, index, self) => self.indexOf(section) === index).map(section => {
+                if (this.state.map) {
+                    var options = this.state.map.filter(m => m.section == section).map(m => <option key={m.category} value={m.category}>{m.category}</option>);
+                    return (
+                        <optgroup label={section}>
+                            {options}
+                        </optgroup>
+                    );
+                }
+                return null;
+            })
             : [];
 
         const mapButtonDisabled = !(this.state.selected && this.state.selected.filter(v => v).length > 0 && this.state.category);
